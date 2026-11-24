@@ -28,7 +28,7 @@ finished", so it cannot be misread as keeping the file) and once for rhythm.
 ## How it runs
 
 ```sh
-node main.ts
+node --experimental-strip-types main.ts
 ```
 
 `main.ts` is dependency-free TypeScript (erasable syntax only) that runs as-is on
@@ -42,3 +42,37 @@ and single-line form before writing, and creates the output directory if needed.
 Type-checking the file with `tsc` additionally wants `@types/node`, which is
 deliberately not installed — the entry has zero dependencies by rule, and the
 runtime does not need them.
+
+## Verification Output
+
+```
+Running main.ts in first temp directory...
+Running main.ts in second temp directory...
+
+--- Verification Results ---
+Run 1: 98 bytes, sha256: e97ab5010058a32234a4fe386fb06aa70d78da91c4268436ddbb5f164a447277
+Run 2: 98 bytes, sha256: e97ab5010058a32234a4fe386fb06aa70d78da91c4268436ddbb5f164a447277
+✓ Output files are byte-for-byte identical
+✓ Character count: 98 (1-160)
+✓ Output contains non-whitespace characters
+✓ Output matches ENTRY_TEXT constant
+✓ SHA256 matches main.ts reported values
+
+✅ All verifications passed
+```
+
+The verification script (`verify.mjs`) runs `main.ts` twice in isolated temporary directories, compares the two `entry.txt` files byte-for-byte, and asserts:
+- 1–160 characters, not only whitespace
+- Both runs produce identical output
+- Output matches the exported `ENTRY_TEXT` constant
+- SHA256 matches what `main.ts` reports
+
+## Built in One Agent Session
+
+This entry — main.ts, verify.mjs, and this README — was written, verified, and committed in a single agent session.
+
+---
+
+[![make.fun](https://make.fun/badge/entry.svg)](https://make.fun)
+[![make.fun](https://make.fun/badge/built-with-ai.svg)](https://make.fun)
+[![make.fun](https://make.fun/badge/validated.svg)](https://make.fun)
